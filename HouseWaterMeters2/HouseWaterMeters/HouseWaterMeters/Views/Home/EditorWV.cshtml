@@ -1,0 +1,22 @@
+﻿
+<div id="editorWV" class="section panel panel-primary" data-bind="if: model.displayMode()=='editorWV'">
+    <div class="panel-heading">
+        Добавить показания счетчика в доме ID: <span data-bind="text: model.editorWV.houseId"> </span> по адресу: <span data-bind="text: model.editorWV.houseAdress"> </span>
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label>Дата</label>
+            <input class="form-control" data-bind="value: model.editorWV.valueDate" type="date"/>
+        </div>
+        <div class="form-group">
+            <label>Значение</label>
+            <input class="form-control" data-bind="value: model.editorWV.value"/>
+        </div>
+        <button type="submit" class="btn btn-primary" data-bind="click: handleEditorWVClick">
+            Сохранить
+        </button>
+        <button class="btn btn-primary" data-bind="click: handleCancelAddValue">
+            Отмена
+        </button>
+    </div>
+</div>

@@ -1,0 +1,19 @@
+﻿<div id="editorWM" class="section panel panel-primary" data-bind="if: model.displayMode()=='createWM'">
+    <div class="panel-heading">
+        Зарегестрировать новый счетчик в доме ID: <span data-bind="text: model.editorWM.houseId"> </span> по адресу: <span data-bind="text: model.editorWM.houseAdress"> </span>
+    </div>
+    <div class="panel-body">
+
+        <div class="form-group">
+            <label>Серийный номер</label>
+            <input class="form-control" data-bind="value: model.editorWM.wmNumber" />
+        </div>
+        <button type="submit" class="btn btn-primary" data-bind="click: handleEditorWMClick">
+            Сохранить
+        </button>
+        <button class="btn btn-primary" data-bind="click: handleSummaryClick">
+            Отмена
+        </button>
+    </div>
+</div>
+

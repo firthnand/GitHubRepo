@@ -1,0 +1,18 @@
+﻿<div id="editor" class="section panel panel-primary" data-bind="if: model.displayMode()=='createHouse'">
+    <div class="panel-heading">
+        Добавить дом
+    </div>
+    <div class="panel-body">
+
+        <div class="form-group">
+            <label>Адрес дома</label>
+            <input class="form-control" data-bind="value: model.editor.houseAdress" />
+        </div>
+        <button type="submit" class="btn btn-primary" data-bind="click: handleEditorClick">
+            Сохранить
+        </button>
+        <button class="btn btn-primary" data-bind="click: handleSummaryClick">
+            К списку домов
+        </button>
+    </div>
+</div>

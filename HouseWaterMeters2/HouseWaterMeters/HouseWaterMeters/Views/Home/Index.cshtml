@@ -1,0 +1,212 @@
+﻿@using HouseWaterMeters.Models
+
+@model IEnumerable<House>
+@{
+    ViewBag.Title = "Все дома";
+}
+
+@section scripts {
+    <script>
+        var model = {
+            houses: ko.observableArray(),
+            values: ko.observableArray(),
+            editor: {
+            houseAdress: ko.observable("")
+            },
+            editorWM: {
+                houseId: ko.observable(""),
+                wmNumber: ko.observable(""),
+                houseAdress: ko.observable("")
+            },
+            editorWV: {
+                houseId: ko.observable(""),
+                wmNumber: ko.observable(""),
+                houseAdress: ko.observable(""),
+                valueDate: ko.observable(""),
+                value: ko.observable("")
+            },
+            consumption: {
+                startDate: ko.observable(""),
+                endDate: ko.observable(""),
+                maxConsumedHouse: ko.observable(""),
+                minConsumedHouse: ko.observable(""),
+
+            },
+            displayMode: ko.observable('summary')
+        };
+
+        function sendAjaxRequest(httpMethod, callback, url, reqData)
+        {
+            $.ajax("/api/House" + (url ? "/" + url : ""), {
+                type: httpMethod,
+                success: callback,
+                data: reqData
+            });
+        }
+
+        function getAllItems()
+        {
+            sendAjaxRequest("GET", function (data) {
+                model.houses.removeAll();
+                for (var i = 0; i < data.length; i++) {
+                    model.houses.push(data[i]);
+                }
+            }, "GetAllHousesAsync");
+        }
+
+        function removeItem(item)
+        {
+            sendAjaxRequest("DELETE", function () {
+                for (var i = 0; i < model.houses().length; i++) {
+                    if (model.houses()[i].HouseId == item.HouseId) {
+                        model.houses.remove(model.houses()[i]);
+                        break;
+                    }
+                }
+            }, "DeleteHouse/" + item.HouseId);
+        }
+
+        function getValuesByHouse(HouseId)
+        {
+            sendAjaxRequest("GET", function (data)
+                {
+                    model.values.removeAll();
+                    for (var i = 0; i < data.length; i++) {
+                        model.values.push(data[i]);
+                }
+            }, "GetAllWaterValuesByHouseId/?houseId=" + HouseId);
+        }
+
+
+        function handleCreateHouseClick()
+        {
+            model.displayMode('createHouse');
+        }
+
+        function handleCancelAddValue()
+        {
+            model.displayMode('values');
+        }
+
+        function handleValuesClick(item)
+        {
+            getValuesByHouse(item.HouseId);
+            model.editorWV.houseId(item.HouseId);
+            model.editorWV.houseAdress(item.HouseAdress);
+            model.displayMode('values');
+        }
+
+        function handleAddValueClick() {
+            model.displayMode('editorWV');
+        }
+
+        function handleSummaryClick() {
+            model.displayMode('summary');
+        }
+        
+        function handleDefineClick() {
+            model.consumption.maxConsumedHouse("");
+            model.consumption.minConsumedHouse("");
+            model.consumption.startDate("");
+            model.consumption.endDate("");
+
+            model.displayMode('consumption');
+        }
+
+        function callbackGetMaxConsumedHouse(data)
+        {
+            model.consumption.maxConsumedHouse(data);
+            model.displayMode('consumption');
+        }
+
+
+        function callbackGetMinConsumedHouse(data) {
+            model.consumption.minConsumedHouse(data);
+            model.displayMode('consumption');
+        }
+
+
+        function handleConsumptionClick()
+        {
+            startDate = new Date(model.consumption.startDate());
+            endDate = new Date(model.consumption.endDate());
+            sendAjaxRequest("GET", callbackGetMaxConsumedHouse
+                , "GetMaxConsumedHouse/?startDate=" + startDate.toISOString() + "&endDate=" + endDate.toISOString());
+            sendAjaxRequest("GET", callbackGetMinConsumedHouse
+            , "GetMinConsumedHouse/?startDate=" + startDate.toISOString() + "&endDate=" + endDate.toISOString());
+ 
+        }
+
+        function handleEditorWVClick() {
+            sendAjaxRequest("POST", function () {
+                getValuesByHouse(model.editorWV.houseId());
+                model.displayMode('values');
+            }, "AddWaterValueByHouseID/?houseId=" + model.editorWV.houseId(), {
+                valueDate: model.editorWV.valueDate().toISOString(),
+                value: model.editorWV.value(),
+            });
+        }
+
+        function addWMItem(item)
+        {
+            model.displayMode('createWM');
+            model.editorWM.houseId(item.HouseId);
+            model.editorWM.houseAdress(item.HouseAdress);
+        }
+
+        function handleEditorClick()
+        {
+            sendAjaxRequest("POST", function (newItem) {
+                model.houses.push(newItem);
+                model.displayMode('summary');
+            }, "AddHouse", {
+                HouseAdress: model.editor.houseAdress
+            });
+        }
+
+        function handleEditorWMClick() {
+            sendAjaxRequest("POST", function (newItem) {
+                getAllItems();
+                model.displayMode('summary');
+            }, "AddWaterMeterByHouseID/?houseId=" + model.editorWM.houseId(), {
+                WMNumber: model.editorWM.wmNumber()
+            });
+        }
+
+        $(document).ready(function ()
+        {
+            getAllItems();
+            ko.applyBindings(model);
+        });
+
+        ko.bindingHandlers.safeText = {
+            update: function (element, valueAccessor, allBindingsAccessor) {
+                try {
+                    var tryGetValue = valueAccessor()();
+                    ko.bindingHandlers.text.update(element, valueAccessor());
+                } catch (e) {
+                    ko.bindingHandlers.text.update(element, function () { return ""; });
+                }
+            }
+        };
+    </script>
+
+}
+
+
+}
+@section body {
+
+    @Html.Partial("Summary", Model)
+    
+    @Html.Partial("EditorHouse", Model)
+
+    @Html.Partial("EditorWM", Model)
+
+    @Html.Partial("Values", Model)
+
+    @Html.Partial("EditorWV", Model)
+
+    @Html.Partial("Consumption", Model)
+
+}

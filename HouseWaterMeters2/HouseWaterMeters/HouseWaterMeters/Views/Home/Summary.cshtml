@@ -1,0 +1,43 @@
+﻿@using HouseWaterMeters.Models
+
+<div id="summary" class="section panel panel-primary" data-bind="if: model.displayMode()=='summary'">
+    <div class="panel-heading">Все дома</div>
+    <div class="panel-body">
+        <table class="table table-striped table-condensed">
+            <thead>
+                <tr><th>ID</th><th>Адрес</th><th>Номер счетчика</th><th></th><th></th></tr>
+            </thead>
+            <tbody data-bind="foreach: model.houses">
+                <tr>
+                    <td data-bind = "text: HouseId"></td>
+                    <td data-bind = "text: HouseAdress"></td>
+
+                    @*<td data-bind = "text: WaterMeter() ? WaterMeter().WMNumber() : ' ' "></td>*@
+
+                    <td data-bind="safeText : function() {return WaterMeter.WMNumber}"></td>
+                    <td>
+                        <button class="btn btn-xs btn-primary" data-bind="click: addWMItem">
+                            Зарегестрировать счетчик
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-xs btn-primary" data-bind="click: handleValuesClick, visible: WaterMeter">
+                            Показания счетчиков
+                        </button>
+                    </td>
+                    <td>
+                        <button class="btn btn-xs btn-primary" data-bind="click: removeItem">
+                            Удалить дом
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-primary" data-bind="click: handleCreateHouseClick">
+            Добавить дом
+        </button>
+        <button class="btn btn-primary" data-bind="click: handleDefineClick">
+            Определить MAX/MIN потребление
+        </button>
+    </div>
+</div>

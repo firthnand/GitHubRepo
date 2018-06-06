@@ -1,0 +1,28 @@
+﻿<div id="consumption" class="section panel panel-primary" data-bind="if: model.displayMode()=='consumption'">
+    <div class="panel-heading">
+        Определить дома с максимальным и минимальным потреблением
+    </div>
+    <div class="panel-body">
+        <div class="form-group">
+            <label>Дата начала</label>
+            <input class="form-control" data-bind="value: model.consumption.startDate" type="date" />
+        </div>
+        <div class="form-group">
+            <label>Дата окончания</label>
+            <input class="form-control" data-bind="value: model.consumption.endDate" type="date" />
+        </div>
+
+        <div class="form-group" data-bind ="visible:model.consumption.maxConsumedHouse()">
+            Дом c максимальным потреблением : <span data-bind="text : model.consumption.maxConsumedHouse().HouseId"> </span> по адресу : <span data-bind="text : model.consumption.maxConsumedHouse().HouseAdress"> </span> 
+        </div>
+        <div class="form-group" data-bind ="visible:model.consumption.minConsumedHouse()">
+            Дом c минимальным потреблением :  <span data-bind="text : model.consumption.minConsumedHouse().HouseId"> </span>  по адресу : <span data-bind="text : model.consumption.minConsumedHouse().HouseAdress"> </span> 
+        </div>
+        <button type="submit" class="btn btn-primary" data-bind="click: handleConsumptionClick">
+            Определить
+        </button>
+        <button class="btn btn-primary" data-bind="click: handleSummaryClick">
+            К списку домов
+        </button>
+    </div>
+</div>
